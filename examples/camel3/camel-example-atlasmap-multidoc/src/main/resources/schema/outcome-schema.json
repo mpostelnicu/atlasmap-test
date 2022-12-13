@@ -9,6 +9,10 @@
             "type": "string"
         },
 
+        "ip": {
+            "type": "string"
+        },
+
         "orderItems": {
             "type": "array",
             "items": {

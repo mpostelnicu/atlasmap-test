@@ -25,16 +25,22 @@ public class Application extends RouteBuilder {
         from("timer:main?period=5000")
             .to("direct:order-producer")
             .to("direct:contact-producer")
-            .to("atlasmap:atlasmap-mapping.adm")
+                .to("direct:ip")
+            .to("atlasmap:atlasmap-mapping-mihai.adm")
             .to("direct:outcome-consumer");
 
+        from("direct:ip")
+                .to("http://ip.jsontest.com")
+                .setProperty("ip-schema", body())
+                    .log("--< ip: [${body}]");
+
         from("direct:order-producer")
-            .setProperty("order-schema", simple("resource:classpath:data/order.json"))
-            .log("-->; Order: [${exchangeProperty.order-schema}]");
+            .setProperty("order-schema", simple("resource:classpath:data/order.json"));
+           // .log("-->; Order: [${exchangeProperty.order-schema}]");
         
         from("direct:contact-producer")
-            .setProperty("contact-schema", simple("resource:classpath:data/contact.xml"))
-            .log("-->; Contact: [${exchangeProperty.contact-schema}]");
+            .setProperty("contact-schema", simple("resource:classpath:data/contact.xml"));
+            //.log("-->; Contact: [${exchangeProperty.contact-schema}]");
         
         from("direct:outcome-consumer")
             .log("--< Outcome: [${body}]");
